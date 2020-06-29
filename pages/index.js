@@ -70,6 +70,7 @@ export default class extends React.Component {
         <div>
           <h1>Oh no! There is a Weather Location: Error!</h1>
           <br />
+
           <div className="center">
             <input id="inputTextbox" type="text" required="required"></input>
             <button type="button" onClick={this.getWeather}>
@@ -77,6 +78,11 @@ export default class extends React.Component {
             </button>
           </div>
           <br />
+          <small>
+            <b>Data response:</b>
+            <br />
+            {JSON.stringify(this.props, null, 4)}
+          </small>
         </div>
       );
     } else {
