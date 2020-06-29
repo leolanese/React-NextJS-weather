@@ -8,10 +8,12 @@ export default class extends React.Component {
   static async getInitialProps() {
     const baseUrlAPI = "http://api.weatherstack.com/";
     const typeRequest = "current";
+    // please get your own free webstack id at: https://weatherstack.com/
     const keyWeatherStack = "456505a9d3924ff286e99ef678d0071b";
     const accessKey = "?access_key=" + keyWeatherStack;
-    const querySearch = "&query=" + "Manchester";
-    const request = baseUrlAPI + typeRequest + accessKey + querySearch;
+    const querySearch = "&query=" + "Rosario";
+    const request =
+      baseUrlAPI + typeRequest + accessKey + querySearch + "&forecast_days=3";
 
     // we used to performed the AJAX call in the component’s componentDidMount()
     // on NextJS we will do it on: getInitialProps() which helps us set the props for a component
@@ -56,22 +58,28 @@ export default class extends React.Component {
     }
   };
 
+  handleInputChange(event) {
+    if (event) {
+      console.log(event.currentTarget.value);
+    }
+  }
+
   // render() method checks the state object and renders the UI with user details if the request
   // is successful or an error message if there is an error in the request.
   render() {
-    if (this.state.error) {
+    debugger;
+    if (this.state.error || this.state.data.success === false) {
       return (
         <div>
-          <h1>Weather Location</h1>
+          <h1>Oh no! There is a Weather Location: Error!</h1>
           <br />
           <div className="center">
-            <input id="inputTextbox" type="text"></input>
+            <input id="inputTextbox" type="text" required="required"></input>
             <button type="button" onClick={this.getWeather}>
-              Get Weather City
+              Try again Weather City
             </button>
           </div>
           <br />
-          <p className="error">Error: {this.state.error.message}</p>
         </div>
       );
     } else {
@@ -162,7 +170,13 @@ export default class extends React.Component {
             </p>
 
             <div className="center weatherBlock">
-              <input id="inputTextbox" type="text"></input>
+              <input
+                id="inputTextbox"
+                type="text"
+                placeholder="Bishops Stortford, UK"
+                required="required"
+                onChange={this.handleInputChange}
+              ></input>
               <button type="button" onClick={this.getWeather}>
                 Get Weather City
               </button>
@@ -176,8 +190,8 @@ export default class extends React.Component {
                 <div className="UserDetails">
                   <p>City: {item.location.name}</p>
                   <p>Country: {item.location.country}</p>
-                  <p>Humidity: {item.current.humidity}</p>
-                  <p>Temperature: {item.current.temperature}</p>
+                  <p>Humidity: {item.current.humidity}%</p>
+                  <p>Temperature: {item.current.temperature} Celcious</p>
                 </div>
               </div>
             ))}
