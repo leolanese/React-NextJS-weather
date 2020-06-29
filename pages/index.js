@@ -17,12 +17,10 @@ export default class extends React.Component {
 
     // we used to performed the AJAX call in the component’s componentDidMount()
     // on NextJS we will do it on: getInitialProps() which helps us set the props for a component
-    try {
-      const res = await axios.get(request);
-      return { data: res.data };
-    } catch (e) {
-      return { error: e };
-    }
+    const res = await fetch(request, { mode: "cors" });
+    const data = await res.json();
+
+    return { data: data };
   }
 
   // constructor() method initializes the state object with the values passed as props.
@@ -67,7 +65,6 @@ export default class extends React.Component {
   // render() method checks the state object and renders the UI with user details if the request
   // is successful or an error message if there is an error in the request.
   render() {
-    debugger;
     if (this.state.error || this.state.data.success === false) {
       return (
         <div>
