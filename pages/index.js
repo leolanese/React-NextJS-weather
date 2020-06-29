@@ -1,209 +1,189 @@
-import Head from 'next/head'
+import React from "react";
+import axios from "axios";
 
-export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+// The HTML is generated at build time and will be reused on each request.
+export default class extends React.Component {
+  // getInitialProps() method gets the initial city weather and returns the data that is set as props for the page.
+  // These props can be accessed using 'this.props' and are not editable.
+  static async getInitialProps() {
+    const baseUrlAPI = "http://api.weatherstack.com/";
+    const typeRequest = "current";
+    const keyWeatherStack = "456505a9d3924ff286e99ef678d0071b";
+    const accessKey = "?access_key=" + keyWeatherStack;
+    const querySearch = "&query=" + "Manchester";
+    const request = baseUrlAPI + typeRequest + accessKey + querySearch;
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+    // we used to performed the AJAX call in the component’s componentDidMount()
+    // on NextJS we will do it on: getInitialProps() which helps us set the props for a component
+    try {
+      const res = await axios.get(request);
+      return { data: res.data };
+    } catch (e) {
+      return { error: e };
+    }
+  }
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+  // constructor() method initializes the state object with the values passed as props.
+  // This state object will be updated every time we fetch weather location details for a specific user requested.
+  constructor(props) {
+    super(props);
+    this.state = { data: props.data, error: props.error };
+  }
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+  // getWeather() method handles the click event of the button and makes an API call every time the user requests details for a
+  // specific weather location. The user id for the location is fetched from the input textbox and is sent as a parameter to the API call.
+  // The state object is updated with the data returned by the API call. As soon as the state object is updated, React re-renders the view.
+  getWeather = async () => {
+    const baseUrlAPI = "http://api.weatherstack.com/";
+    const typeRequest = "current";
+    const keyWeatherStack = "456505a9d3924ff286e99ef678d0071b";
+    const accessKey = "?access_key=" + keyWeatherStack;
+    const querySearch =
+      "&query=" + document.getElementById("inputTextbox").value;
+    const request = baseUrlAPI + typeRequest + accessKey + querySearch;
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+    try {
+      const res = await axios.get(request);
+      this.setState({
+        data: res.data,
+        error: null,
+      });
+    } catch (e) {
+      this.setState({
+        data: null,
+        error: e,
+      });
+    }
+  };
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+  // render() method checks the state object and renders the UI with user details if the request
+  // is successful or an error message if there is an error in the request.
+  render() {
+    if (this.state.error) {
+      return (
+        <div>
+          <h1>Weather Location</h1>
+          <br />
+          <div className="center">
+            <input id="inputTextbox" type="text"></input>
+            <button type="button" onClick={this.getWeather}>
+              Get Weather City
+            </button>
+          </div>
+          <br />
+          <p className="error">Error: {this.state.error.message}</p>
         </div>
-      </main>
+      );
+    } else {
+      return (
+        <div>
+          <style jsx global>
+            {`
+              * {
+                box-sizing: border-box;
+              }
+              body {
+                font-family: "Source Sans Pro", sans-serif;
+                font-weight: 300;
+                background: url(http://bit.ly/2gPLxZ4);
+                background-size: cover;
+                color: white;
+              }
+              img {
+                height: 50px;
+                width: 50px;
+                border: 1px solid black;
+              }
+              .weatherBlock {
+                display: inline-block;
+                text-align: center;
+                border: 1px solid black;
+                border-radius: 5px;
+                padding: 10px;
+                margin: 15px;
+                width: 95%;
+                background: steelblue;
+              }
+              .error {
+                color: red;
+                font-weight: bold;
+                font-size: 28px;
+                text-align: center;
+              }
+              @import url(
+                https://fonts.googleapis.com/css?family=Source + Sans + Pro:200,
+                300
+              );
+              h1 {
+                font-size: 3em;
+                text-align: center;
+              }
+              article {
+                max-width: 600px;
+                overflow: hidden;
+                margin: 0 auto 50px;
+              }
+              .subtitle {
+                margin: 0 0 2em 0;
+              }
+              .fancy {
+                line-height: 0.555;
+                text-align: center;
+              }
+              .fancy span {
+                display: inline-block;
+                position: relative;
+              }
+              .fancy span:before,
+              .fancy span:after {
+                content: "";
+                position: absolute;
+                height: 5px;
+                border-bottom: 1px solid #000;
+                border-top: 1px solid #fff;
+                top: 0;
+                width: 600px;
+              }
+              .fancy span:before {
+                right: 100%;
+                margin-right: 15px;
+              }
+              .fancy span:after {
+                left: 100%;
+                margin-left: 15px;
+              }
+            `}
+          </style>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
+          <article>
+            <h1>Weather forecast</h1>
+            <p className="subtitle fancy">
+              <span>Using SSR: Next and React</span>
+            </p>
 
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
+            <div className="center weatherBlock">
+              <input id="inputTextbox" type="text"></input>
+              <button type="button" onClick={this.getWeather}>
+                Get Weather City
+              </button>
+            </div>
+            <br />
+            {console.log([this.state])}
 
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
+            {[this.state.data].map((item, index) => (
+              <div key={index} className="weatherBlock">
+                <img src={item.current.weather_icons[0]} />
+                <div className="UserDetails">
+                  <p>City: {item.location.name}</p>
+                  <p>Country: {item.location.country}</p>
+                  <p>Humidity: {item.current.humidity}</p>
+                  <p>Temperature: {item.current.temperature}</p>
+                </div>
+              </div>
+            ))}
+          </article>
+        </div>
+      );
+    }
+  }
 }

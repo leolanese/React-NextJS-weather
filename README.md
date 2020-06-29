@@ -1,3 +1,15 @@
+Installation
+
+yarn create next-app
+npm install axios
+yarn next
+
+Note
+We normally performed the AJAX call in the component’s componentDidMount() method
+Now we will use special method, getInitialProps(), provided by Next.js which helps us set the props for a component, so we will initiate our Axios request in the getInitialProps() method .
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
