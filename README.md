@@ -1,13 +1,14 @@
 # React NextJS Weather App
 
-## Installation
-```javascript
+## Installation
+```js
 yarn create next-app
 npm install axios
 yarn next
 ```
 
-### Note:
+### Note
+
 -We normally performed the AJAX call in the component’s componentDidMount() method
 -Now we will use special method, getInitialProps(), provided by Next.js which helps us set the props for a component, so we will initiate our Axios request in the getInitialProps() method .
 
